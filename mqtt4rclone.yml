@@ -1,0 +1,6 @@
+mqtt:
+  url: "tcp://<MQTT SERVER>:1883"
+  username: <MQTT USERNAME>
+  password: <MQTT PASSWORD>
+  qos: 0
+  retain: false
