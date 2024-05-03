@@ -38,7 +38,7 @@ func receive(client MQTT.Client, msg MQTT.Message) {
 			log.Fatal().Err(err)
 			return
 		}
-	
+
 		sendToMtt(RESPONSE_TOPIC, response)
 	}
 }

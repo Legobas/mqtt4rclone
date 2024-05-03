@@ -24,7 +24,7 @@ type Mqtt struct {
 }
 
 type Config struct {
-	Mqtt     Mqtt      `yaml:"mqtt"`
+	Mqtt Mqtt `yaml:"mqtt"`
 }
 
 func getConfig() Config {
