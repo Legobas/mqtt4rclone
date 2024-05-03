@@ -15,30 +15,15 @@ Because it is based on the MQTT protocol can it be easily be integrated with hom
 
 ## Installation
 
-MQTT4Rclone can be used in a [Go](https://go.dev) environment or as a [Docker container](#docker):
+MQTT4Rclone is available as a Docker [Docker container](#docker) on [DockerHub](https://hub.docker.com/r/legobas/mqtt4rclone)
 
-```bash
-$ go get -u github.com/Legobas/mqtt4rclone
-```
+The Docker image contains the Rclone excutable, so there is no need to run a seperate Rclone container.
 
-## Environment variables
-
-Supported environment variables:
-
-```
-LOGLEVEL = INFO/DEBUG/ERROR
-```
-
-# Configuration
+## Configuration
 
 MQTT4Rclone can be configured with the `mqtt4rclone.yml` yaml configuration file.
-The `mqtt4rclone.yml` file has to exist in one of the following locations:
 
- * A `config` directory in de filesystem root: `/config/mqtt4rclone.yml`
- * A `.config` directory in the user home directory `~/.config/mqtt4rclone.yml`
- * The current working directory
-
-## Configuration options
+### Configuration options
 
 | Config item               | Description                                                              |
 | ------------------------- | ------------------------------------------------------------------------ |
@@ -63,6 +48,9 @@ rclone:
 
 ```      
 
+The Rclone configuration file must be present in de same config directory.
+Although Rclone can be configured by MQTT, the preferred option is to create the config file with Rclone on a work computer and then copy it to the config directory.
+
 ## Commands
 
 MQTT4Rclone send commands to Rclone based on the MQTT topic and message.
@@ -74,7 +62,7 @@ All the `sync/*` commands **will be started as jobs**, MQTT4Rclone will add `"_a
 The local path in the docker container is `/data`.
 This path has to be used in the commands sent to rclone (see examples).
 
-## Examples
+### Examples
 
 ```
 Order:
