@@ -63,6 +63,8 @@ MQTT4Rclone send commands to Rclone based on the MQTT topic and message.
 The topic is the same as the Rclone rc url path and the message is the JSON as described by: 
 [Rclone Commands](https://rclone.org/rc/#supported-commands)
 
+All the `sync/*` commands **will be started as jobs**, MQTT4Rclone will add `"_async":true` to the json message.
+
 ## Examples
 
 ```
