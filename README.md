@@ -23,7 +23,7 @@ The Docker image contains the Rclone excutable, so there is no need to run a sep
 
 MQTT4Rclone can be configured with the `mqtt4rclone.yml` yaml configuration file.
 
-### Configuration options
+### MQTT4Rclone Configuration options
 
 | Config item               | Description                                                              |
 | ------------------------- | ------------------------------------------------------------------------ |
@@ -47,6 +47,8 @@ rclone:
   response_topic: <MQTT Topic>
 
 ```      
+
+### Rclone configuration
 
 The Rclone configuration file must be present in de same config directory.
 Although Rclone can be configured by MQTT, the preferred option is to create the config file with Rclone on a work computer and then copy it to the config directory.
