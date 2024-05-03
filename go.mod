@@ -1,4 +1,4 @@
-module localhost/mqtt4rclone
+module github.com/Legobas/mqtt4rclone
 
 go 1.22.2
 
