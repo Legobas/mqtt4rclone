@@ -2,6 +2,7 @@ package main
 
 import (
 	"os"
+	"strings"
 	"time"
 
 	MQTT "github.com/eclipse/paho.mqtt.golang"
@@ -31,7 +32,10 @@ func receive(client MQTT.Client, msg MQTT.Message) {
 	log.Trace().Msgf("MQTT Message: %s", msg)
 	if topic != STATUS_TOPIC && topic != RESPONSE_TOPIC {
 		command := topic[len(APPNAME):]
-		json := string(msg.Payload()[:])
+		json := strings.TrimSpace(string(msg.Payload()[:]))
+		if len(json) == 0 {
+			json = "{}"
+		}
 
 		response, err := sendToRclone(command, json)
 		if err != nil {

@@ -73,7 +73,7 @@ MQTT topic
 MQTT message
 
 mqtt4rclone/options/get
-{}
+<empty message> or {}
 
 mqtt4rclone/options/set
 {"main":{"LogLevel":"DEBUG"}}

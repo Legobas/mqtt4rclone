@@ -36,8 +36,8 @@ func sendToRclone(command string, payload string) (string, error) {
 		payload = string(msg)
 	}
 
-	log.Debug().Msgf("url: %s", url)
-	log.Debug().Msgf("json: %s", payload)
+	log.Debug().Msgf("Rclone url: %s", url)
+	log.Debug().Msgf("Rclone json: %s", payload)
 
 	req, err := http.NewRequest(http.MethodPost, url, strings.NewReader(payload))
 	if err != nil {
