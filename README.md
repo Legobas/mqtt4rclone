@@ -65,6 +65,9 @@ The topic is the same as the Rclone rc url path and the message is the JSON as d
 
 All the `sync/*` commands **will be started as jobs**, MQTT4Rclone will add `"_async":true` to the json message.
 
+The local path in the docker container is `/data`.
+This path has to be used in the commands sent to rclone (see examples).
+
 ## Examples
 
 ```
@@ -123,16 +126,26 @@ services:
     image: legobas/mqtt4rclone:latest
     container_name: mqtt4rclone
     environment:
-      - PUID=1000
-      - PGID=1000
-      - LOGLEVEL=debug
-      - RCLONE_LOGLEVEL=INFO
-      - TZ=Europe/Amsterdam
+      - PUID=1000              # User id for access to config or data directories with user rights
+      - PGID=1000              # User group id
+      - LOGLEVEL=debug         # MQTT4Rclone log level: DEBUG/INFO/ERROR 
+      - RCLONE_LOGLEVEL=INFO   # Rclone log level: DEBUG/INFO/NOTICE/ERROR
+      - TZ=America/New_York    # Timezone
     volumes:
       - /home/legobas/mqtt4rclone:/config
-      - /home/legobas/rclone_data:/data
+      - /cloud_data:/data
     restart: unless-stopped
 ```
+
+The environment variables are not necessary, if omitted the default values will be used.
+
+## Logging
+
+The logs of mqtt4rclone and rclone are written to stdout, with docker is this the standard docker log.
+
+To view the logging:
+`docker compose logs` or `docker logs mqtt4rclone`
+
 
 ## Credits
 

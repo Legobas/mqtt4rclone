@@ -7,8 +7,8 @@ services:
       - PGID=1000
       - LOGLEVEL=debug
       - RCLONE_LOGLEVEL=INFO
-      - TZ=Europe/Amsterdam
+      - TZ=America/New_York
     volumes:
       - /home/legobas/mqtt4rclone:/config
-      - /home/legobas/rclone_data:/data
+      - /cloud_data:/data
     restart: unless-stopped
