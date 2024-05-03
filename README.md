@@ -157,7 +157,7 @@ mqtt4rclone/options/set
 {"main":{"LogLevel":"NOTICE"}}
 ```
 
-The logs of mqtt4rclone and rclone are written to stdout, with docker is this the standard docker log.
+The logs of mqtt4rclone and rclone are written to stdout, this is the standard docker log.
 
 To view the logging:
 `docker compose logs` or `docker logs mqtt4rclone`
