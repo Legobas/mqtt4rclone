@@ -46,6 +46,8 @@ The `mqtt4rclone.yml` file has to exist in one of the following locations:
 | url                       | MQTT Server URL                                                          |
 | username/password         | MQTT Server Credentials                                                  |
 | qos                       | MQTT Server Quality Of Service                                           |
+| **rclone**                |                                                                          |
+| response_topic            | MQTT Topic for Rclone response message                                   |
 
 Example mqtt4rclone.yml:
 
@@ -55,6 +57,10 @@ Example mqtt4rclone.yml:
       username: <MQTT USERNAME>
       password: <MQTT PASSWORD>
       qos: 0
+
+rclone:
+  response_topic: <MQTT Topic>
+
 ```      
 
 ## Commands
@@ -91,6 +97,12 @@ mqtt4rclone/sync/sync
 {"srcFs":"/data/mydropbox","dstFs":"dropbox:","_filter":{"MaxAge":"1d"}}
 
 ```
+
+## Rclone Response
+
+The default MQTT topic where the Rclone response is sent to is: `mqtt4rclone/response`.
+This topic can be changed by the setting configuration option `response_topic`,
+so any MQTT client, like Node-RED, can process the Rclone response for other actions.
 
 ## Autosync
 
