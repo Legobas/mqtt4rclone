@@ -65,6 +65,14 @@ The topic is the same as the Rclone rc url path and the message is the JSON as d
 
 ## Examples
 
+```
+topic: mqtt4rclone/config/listremotes
+message: {}
+
+
+
+```
+
 ## Docker
 
 Docker run example:
@@ -97,3 +105,4 @@ services:
 * [Rclone](https://rclone.org)
 * [Paho Mqtt Client](https://github.com/eclipse/paho.mqtt.golang)
 * [ZeroLog](https://github.com/rs/zerolog)
+* [MultiRun](https://nicolas-van.github.io/multirun)
