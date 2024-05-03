@@ -128,8 +128,8 @@ services:
     environment:
       - PUID=1000              # User id for access to config or data directories with user rights
       - PGID=1000              # User group id
-      - LOGLEVEL=debug         # MQTT4Rclone log level: DEBUG/INFO/ERROR 
-      - RCLONE_LOGLEVEL=INFO   # Rclone log level: DEBUG/INFO/NOTICE/ERROR
+      - LOGLEVEL=debug         # MQTT4Rclone log level: ERROR/INFO (default)/DEBUG/TRACE
+      - RCLONE_LOGLEVEL=INFO   # Rclone log level: ERROR/NOTICE (default)/INFO/DEBUG
       - TZ=America/New_York    # Timezone
     volumes:
       - /home/legobas/mqtt4rclone:/config
@@ -140,6 +140,20 @@ services:
 The environment variables are not necessary, if omitted the default values will be used.
 
 ## Logging
+
+To temporarily set the rclone logging to debug, send the command:
+
+```
+mqtt4rclone/options/set
+{"main":{"LogLevel":"DEBUG"}}
+```
+
+after debugging set it back by restarting the service or by sending:
+
+```
+mqtt4rclone/options/set
+{"main":{"LogLevel":"NOTICE"}}
+```
 
 The logs of mqtt4rclone and rclone are written to stdout, with docker is this the standard docker log.
 

@@ -18,21 +18,25 @@ const (
 
 var mqttClient MQTT.Client
 
-func sendToMtt(topic string, message string) {
-	mqttClient.Publish(topic, byte(config.Mqtt.Qos), config.Mqtt.Retain, message)
-}
-
-func sendToMttRetain(topic string, message string) {
-	mqttClient.Publish(topic, byte(config.Mqtt.Qos), true, message)
+func sendToMtt(topic string, message string, retain bool) {
+	mqttClient.Publish(topic, byte(config.Mqtt.Qos), retain, message)
 }
 
 func receive(client MQTT.Client, msg MQTT.Message) {
 	topic := msg.Topic()
-	log.Trace().Msgf("MQTT Topic: %s", topic)
-	log.Trace().Msgf("MQTT Message: %s", msg)
-	if topic != STATUS_TOPIC && topic != RESPONSE_TOPIC {
+	responseTopic := RESPONSE_TOPIC
+	if config.Rclone.ResponseTopic != "" {
+		responseTopic = config.Rclone.ResponseTopic
+	}
+
+	if topic != STATUS_TOPIC && topic != responseTopic {
+		message := string(msg.Payload()[:])
+		log.Trace().Msgf("MQTT Topic: %s", topic)
+		log.Trace().Msgf("MQTT Message: %s", message)
+		log.Trace().Msgf("MQTT Response Topic: %s", responseTopic)
+
 		command := topic[len(APPNAME):]
-		json := strings.TrimSpace(string(msg.Payload()[:]))
+		json := strings.TrimSpace(message)
 		if len(json) == 0 {
 			json = "{}"
 		}
@@ -43,7 +47,7 @@ func receive(client MQTT.Client, msg MQTT.Message) {
 			return
 		}
 
-		sendToMtt(RESPONSE_TOPIC, response)
+		sendToMtt(responseTopic, response, false)
 	}
 }
 

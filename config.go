@@ -20,11 +20,15 @@ type Mqtt struct {
 	Username string `yaml:"username"`
 	Password string `yaml:"password"`
 	Qos      int    `yaml:"qos"`
-	Retain   bool   `yaml:"retain"`
+}
+
+type Rclone struct {
+	ResponseTopic string `yaml:"response_topic"`
 }
 
 type Config struct {
-	Mqtt Mqtt `yaml:"mqtt"`
+	Mqtt   Mqtt   `yaml:"mqtt"`
+	Rclone Rclone `yaml:"rclone"`
 }
 
 func getConfig() Config {
@@ -60,7 +64,7 @@ func getConfig() Config {
 		log.Fatal().Err(err).Msg("validate")
 	}
 
-	log.Trace().Msgf("%+v\n", config)
+	log.Trace().Msgf("Config: %+v\n", config)
 	return config
 }
 

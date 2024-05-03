@@ -62,7 +62,7 @@ func sendToRclone(command string, payload string) (string, error) {
 
 	responseMessage := string(response)
 
-	log.Trace().Msg(responseMessage)
+	log.Trace().Msgf("Rclone response: %s", responseMessage)
 
 	if async {
 		log.Debug().Msgf("Job: %s", responseMessage)
@@ -74,17 +74,16 @@ func sendToRclone(command string, payload string) (string, error) {
 func rcloneOnline() bool {
 	online := false
 	for i := 1; i < 10; i++ {
+		time.Sleep(time.Second * 1)
 		response, err := sendToRclone("/core/version", "{}")
-		if err != nil {
-			time.Sleep(time.Second * 1)
-		} else {
+		if err == nil {
 			online = true
 			data := map[string]interface{}{}
 			err := json.Unmarshal([]byte(response), &data)
 			if err != nil {
 				log.Fatal().Err(err)
 			}
-			log.Info().Msgf("RClone version: %s", data["version"])
+			log.Info().Msgf("Rclone version: %s", data["version"])
 			break
 		}
 	}

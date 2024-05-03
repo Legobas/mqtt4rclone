@@ -56,7 +56,7 @@ func main() {
 	startMqttClient()
 
 	// Refresh status
-	sendToMttRetain(APPNAME+"/status", "Online")
+	sendToMtt(APPNAME+"/status", "Online", true)
 
 	if rcloneOnline() {
 		log.Debug().Msg("Rclone is ready")
