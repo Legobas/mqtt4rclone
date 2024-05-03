@@ -1,0 +1,14 @@
+services:
+  MQTT4Rclone:
+    image: legobas/mqtt4rclone:latest
+    container_name: mqtt4rclone
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - LOGLEVEL=debug
+      - RCLONE_LOGLEVEL=INFO
+      - TZ=Europe/Amsterdam
+    volumes:
+      - /home/legobas/mqtt4rclone:/config
+      - /home/legobas/rclone_data:/data
+    restart: unless-stopped
