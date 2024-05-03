@@ -66,11 +66,43 @@ The topic is the same as the Rclone rc url path and the message is the JSON as d
 ## Examples
 
 ```
-topic: mqtt4rclone/config/listremotes
-message: {}
+Order:
+MQTT topic
+MQTT message
 
+mqtt4rclone/options/get
+{}
 
+mqtt4rclone/options/set
+{"main":{"LogLevel":"DEBUG"}}
 
+mqtt4rclone/config/listremotes
+{}
+
+mqtt4rclone/operations/fsinfo
+{"fs":"dropbox:"}
+
+mqtt4rclone/sync/sync
+{"srcFs":"/data/mydropbox","dstFs":"dropbox:","_filter":{"MaxAge":"1d"}}
+
+```
+
+## Autosync
+
+To automatically sync every day/hour/minute you can use [MQTT-Timer](https://github.com/Legobas/mqtt-timer) with a configuration like this:
+
+```yml
+    timers:
+    - id: rclone_dropbox
+      time: 01:00:00
+      description: RClone Sync Local to Dropbox every day at 1.00
+      topic: mqtt4rclone/sync/sync
+      message: '{"srcFs":"/data/mydropbox","dstFs":"dropbox:"}'
+    - id: rclone_mega
+      cron: 00 * * * *
+      description: RClone Mega to Local every hour
+      topic: mqtt4rclone/sync/copy
+      message: '{"srcFs":"mega:","dstFs":"/data/mymega"}'
 ```
 
 ## Docker
