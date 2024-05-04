@@ -14,6 +14,15 @@ It makes it possible to use Rclone with MQTT-enabled devices or services to crea
 Because it is based on the MQTT protocol can it be easily be integrated with home automation systems, like Home Assistant, Domoticz or Node-RED.
 One example would be to upload the images or videos captured by a security camera to cloud-based storage services.
 
+### How it workes
+
+RClone is started in 'Remote Control' mode, so it can be controlled by its HTTP API.
+The mqtt4rclone service will send the MQTT JSON message it receives to the Rclone API, using the MQTT topic to create the Rclone url.
+Than will Rclone perform the action like synchronizing with a cloud storage.
+Actions which take a long time like sync or copy are handled as a job and return a HTTP response immediately.
+After the HTTP call is completed the response message is sent back to an MQTT topic.
+This is safely done using only the local network environment of the container.
+
 ## Installation
 
 MQTT4Rclone is available as a Docker [Docker container](#docker) on [DockerHub](https://hub.docker.com/r/legobas/mqtt4rclone)
@@ -93,7 +102,7 @@ mqtt4rclone/sync/sync
 
 The default MQTT topic where the Rclone response is sent to is: `mqtt4rclone/response`.
 This topic can be changed by the setting configuration option `response_topic`,
-so any MQTT client, like Node-RED, can process the Rclone response for other actions.
+so any MQTT client can receive the Rclone response and process it.
 
 ## Autosync
 
