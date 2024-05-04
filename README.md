@@ -37,11 +37,11 @@ MQTT4Rclone can be configured with the `mqtt4rclone.yml` yaml configuration file
 Example mqtt4rclone.yml:
 
 ```yml
-    mqtt:
-      url: "tcp://<MQTT SERVER>:1883"
-      username: <MQTT USERNAME>
-      password: <MQTT PASSWORD>
-      qos: 0
+mqtt:
+  url: "tcp://<MQTT SERVER>:1883"
+  username: <MQTT USERNAME>
+  password: <MQTT PASSWORD>
+  qos: 0
 
 rclone:
   response_topic: <MQTT Topic>
