@@ -18,7 +18,7 @@ One example would be to upload the images or videos captured by a security camer
 
 RClone is started in 'Remote Control' mode, so it can be controlled by its HTTP API.
 The mqtt4rclone service will send the MQTT JSON message it receives to the Rclone API, using the MQTT topic to create the Rclone url.
-Than will Rclone perform the action like synchronizing with a cloud storage.
+Rclone will then perform the action like synchronizing with a cloud storage.
 Actions which take a long time like sync or copy are handled as a job and return a HTTP response immediately.
 After the HTTP call is completed the response message is sent back to an MQTT topic.
 This is safely done using only the local network environment of the container.
