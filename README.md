@@ -35,14 +35,14 @@ MQTT4Rclone can be configured with the `mqtt4rclone.yml` yaml configuration file
 
 ### MQTT4Rclone Configuration options
 
-| Config item               | Description                                                              |
-| ------------------------- | ------------------------------------------------------------------------ |
-| **mqtt**                  |                                                                          |
-| url                       | MQTT Server URL                                                          |
-| username/password         | MQTT Server Credentials                                                  |
-| qos                       | MQTT Server Quality Of Service                                           |
-| **rclone**                |                                                                          |
-| response_topic            | MQTT Topic for Rclone response message                                   |
+| Config item               | Description                              | Mandatory |
+| ------------------------- | ---------------------------------------- | --------- |
+| **mqtt**                  |                                          |           |
+| url                       | MQTT Server URL                          | Yes       |
+| username/password         | MQTT Server Credentials                  | No        |
+| qos                       | MQTT Server Quality Of Service           | No        |
+| **rclone**                |                                          |           |
+| response_topic            | MQTT Topic for Rclone response message   | No        |
 
 Example mqtt4rclone.yml:
 
