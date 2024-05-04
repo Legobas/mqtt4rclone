@@ -12,6 +12,7 @@ Control Rclone by MQTT
 MQTT4Rclone is a service that enables [Rclone](https://rclone.org) to be controlled and monitored using MQTT commands.
 It makes it possible to use Rclone with MQTT-enabled devices or services to create automated workflows, such as triggering backups based on specific events or schedules.
 Because it is based on the MQTT protocol can it be easily be integrated with home automation systems, like Home Assistant, Domoticz or Node-RED.
+One example would be to upload the images or videos captured by a security camera to cloud-based storage services.
 
 ## Installation
 
