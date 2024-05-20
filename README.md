@@ -1,6 +1,6 @@
 # MQTT4Rclone
 
-Control Rclone by MQTT
+Control Rclone with MQTT messages
 
 [![mqtt-smarthome](https://img.shields.io/badge/mqtt-smarthome-blue.svg?style=flat-square)](https://github.com/mqtt-smarthome/mqtt-smarthome)
 [![Build/Test](https://github.com/Legobas/mqtt4rclone/actions/workflows/release.yml/badge.svg)](https://github.com/Legobas/mqtt4rclone/actions/workflows/release.yml)
@@ -12,7 +12,7 @@ Control Rclone by MQTT
 MQTT4Rclone is a service that enables [Rclone](https://rclone.org) to be controlled and monitored using MQTT commands.
 It makes it possible to use Rclone with MQTT-enabled devices or services to create automated workflows, such as triggering backups based on specific events or schedules.
 Because it is based on the MQTT protocol can it be easily be integrated with home automation systems, like Home Assistant, Domoticz or Node-RED.
-One example would be to upload the images or videos captured by a security camera to cloud-based storage services.
+An use case example is to upload the images or videos captured by a security camera to cloud-based storage services.
 
 ### How it workes
 
@@ -81,6 +81,9 @@ Order:
 MQTT topic
 MQTT message
 
+mqtt4rclone/core/stats
+<empty message> or {}
+
 mqtt4rclone/options/get
 <empty message> or {}
 
@@ -94,6 +97,9 @@ mqtt4rclone/operations/fsinfo
 {"fs":"dropbox:"}
 
 mqtt4rclone/sync/sync
+{"srcFs":"/data/mydropbox","dstFs":"dropbox:"}
+
+mqtt4rclone/sync/copy
 {"srcFs":"/data/mydropbox","dstFs":"dropbox:","_filter":{"MaxAge":"1d"}}
 
 ```
@@ -153,6 +159,7 @@ The environment variables are not necessary, if omitted the default values will 
 
 ## Logging
 
+Rclone log levels: [DEBUG|INFO|NOTICE|ERROR (default NOTICE)](https://rclone.org/flags/#logging).
 To temporarily set the rclone logging to debug, send the command:
 
 ```
