@@ -27,11 +27,16 @@ This is safely done using only the local network environment of the container.
 
 MQTT4Rclone is available as a Docker [Docker container](#docker) on [DockerHub](https://hub.docker.com/r/legobas/mqtt4rclone)
 
-The Docker image contains the Rclone excutable, so there is no need to run a seperate Rclone container.
+# create internal network and start MQTT4Rclone
+
+docker network create "rclone"
+docker compose up -d
 
 ## Configuration
 
 MQTT4Rclone can be configured with the `mqtt4rclone.yml` yaml configuration file.
+
+Keep the RC API private; don't publish 5533 to your network.
 
 ### MQTT4Rclone Configuration options
 
@@ -42,6 +47,7 @@ MQTT4Rclone can be configured with the `mqtt4rclone.yml` yaml configuration file
 | username/password         | MQTT Server Credentials                  | No        |
 | qos                       | MQTT Server Quality Of Service           | No        |
 | **rclone**                |                                          |           |
+| rc_username/rc_password   | RClone Remote Control API Credentials    | No        |
 | response_topic            | MQTT Topic for Rclone response message   | No        |
 
 Example mqtt4rclone.yml:
@@ -54,6 +60,8 @@ mqtt:
   qos: 0
 
 rclone:
+  rc_username: <Rclone Remote Control USERNAME>
+  rc_password: <Rclone Remote Control PASSWORD>
   response_topic: <MQTT Topic>
 
 ```      
@@ -61,7 +69,6 @@ rclone:
 ### Rclone configuration
 
 The Rclone configuration file must be present in de same config directory.
-Although Rclone can be configured by MQTT, the preferred option is to create the config file with Rclone on a work computer and then copy it to the config directory.
 
 ## Commands
 
@@ -139,19 +146,44 @@ $ docker run -d -v /home/legobas/mqtt4rclone:/config -v /home/legobas/rclone_dat
 Docker compose example:
 
 ```yml
+networks:
+  rclone:
+    internal: true
+  mqtt:
+    external: true
+
 services:
-  MQTT4Rclone:
+  rclone:
+    image: rclone/rclone:latest
+    container_name: rclone
+    ports:
+      - 5533:5533
+    networks:
+      - rclone
+    volumes:
+      - /home/bdr/data/rclone:/config/rclone
+      - /storage/rclone/test:/data
+    command:
+      - rcd
+      - --rc-addr=0.0.0.0:5533
+      - --rc-user=bdr
+      - --rc-pass=153068
+      - --log-level=debug
+    restart: unless-stopped
+
+  mqtt4rclone:
     image: legobas/mqtt4rclone:latest
     container_name: mqtt4rclone
     environment:
       - PUID=1000              # User id for access to config or data directories with user rights
       - PGID=1000              # User group id
       - LOGLEVEL=debug         # MQTT4Rclone log level: ERROR/INFO (default)/DEBUG/TRACE
-      - RCLONE_LOGLEVEL=INFO   # Rclone log level: ERROR/NOTICE (default)/INFO/DEBUG
       - TZ=America/New_York    # Timezone
+    networks:
+      - rclone
+      - mqtt
     volumes:
       - /home/legobas/mqtt4rclone:/config
-      - /cloud_data:/data
     restart: unless-stopped
 ```
 
@@ -185,4 +217,3 @@ To view the logging:
 * [Rclone](https://rclone.org)
 * [Paho Mqtt Client](https://github.com/eclipse/paho.mqtt.golang)
 * [ZeroLog](https://github.com/rs/zerolog)
-* [MultiRun](https://nicolas-van.github.io/multirun)
