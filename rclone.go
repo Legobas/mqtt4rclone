@@ -11,7 +11,7 @@ import (
 )
 
 const (
-	BASE_URL                 = "http://localhost:5572"
+	BASE_URL                 = "http://rclone:5533"
 	RC_TIMEOUT time.Duration = time.Second * 10
 )
 
