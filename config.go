@@ -23,6 +23,9 @@ type Mqtt struct {
 }
 
 type Rclone struct {
+	//	Port          int    `yaml:"rc_port"`
+	Username      string `yaml:"rc_username"`
+	Password      string `yaml:"rc_password"`
 	ResponseTopic string `yaml:"response_topic"`
 }
 

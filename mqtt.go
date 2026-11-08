@@ -11,9 +11,9 @@ import (
 
 const (
 	TIMEOUT        time.Duration = time.Second * 10
-	SUBSCRIBE                    = APPNAME + "/#"
-	STATUS_TOPIC                 = APPNAME + "/status"
-	RESPONSE_TOPIC               = APPNAME + "/response"
+	SUBSCRIBE                    = appName + "/#"
+	STATUS_TOPIC                 = appName + "/status"
+	RESPONSE_TOPIC               = appName + "/response"
 )
 
 var mqttClient MQTT.Client
@@ -35,7 +35,7 @@ func receive(client MQTT.Client, msg MQTT.Message) {
 		log.Trace().Msgf("MQTT Message: %s", message)
 		log.Trace().Msgf("MQTT Response Topic: %s", responseTopic)
 
-		command := topic[len(APPNAME):]
+		command := topic[len(appName):]
 		json := strings.TrimSpace(message)
 		if len(json) == 0 {
 			json = "{}"
@@ -53,7 +53,7 @@ func receive(client MQTT.Client, msg MQTT.Message) {
 
 func GetClientId() string {
 	hostname, _ := os.Hostname()
-	return APPNAME + "_" + hostname
+	return appName + "_" + hostname
 }
 
 func startMqttClient() {

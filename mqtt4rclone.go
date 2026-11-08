@@ -13,12 +13,12 @@ import (
 )
 
 const (
-	APPNAME string = "mqtt4rclone"
+	appName string = "mqtt4rclone"
 )
 
 var (
-	//go:embed version.txt
-	VERSION string
+	//Version import - build with -ldflags "-X main.Version=${VERSION}"
+	Version string = "dev"
 	config  Config
 )
 
@@ -45,18 +45,18 @@ func init() {
 	// Get Config
 	config = getConfig()
 
-	// Print Version
-	log.Info().Msgf("%s %s", APPNAME, strings.TrimSpace(VERSION))
+	// Print Application with version
+	log.Info().Msgf("%s %s", appName, Version)
 }
 
 func main() {
 	zoneName, _ := time.Now().Zone()
-	log.Debug().Msgf("%s start, Local Time=%s Timezone=%s", APPNAME, time.Now().Local().Format("15:04:05"), zoneName)
+	log.Debug().Msgf("%s start, Local Time=%s Timezone=%s", appName, time.Now().Local().Format("15:04:05"), zoneName)
 
 	startMqttClient()
 
 	// Refresh status
-	sendToMtt(APPNAME+"/status", "Online", true)
+	sendToMtt(appName+"/status", "Online", true)
 
 	if rcloneOnline() {
 		log.Debug().Msg("Rclone is ready")
@@ -67,5 +67,5 @@ func main() {
 	sigChan := make(chan os.Signal, 1)
 	signal.Notify(sigChan, os.Interrupt)
 	<-sigChan
-	log.Debug().Msgf("%s stop, Local Time=%s Timezone=%s", APPNAME, time.Now().Local().Format("15:04:05"), zoneName)
+	log.Debug().Msgf("%s stop, Local Time=%s Timezone=%s", appName, time.Now().Local().Format("15:04:05"), zoneName)
 }

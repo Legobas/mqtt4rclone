@@ -1,4 +1,18 @@
 services:
+  rclone:
+    image: rclone/rclone:latest
+    container_name: rclone
+    ports:
+      - 5533:5533
+    volumes:
+      - /home/legobas/data/rclone:/config/rclone
+      - /storage/rclone:/data
+    command:
+      - --api-addr=0.0.0.0:5533
+      - --user=xxxxxxxx
+      - --pass=xxxxxxxx
+    restart: unless-stopped
+
   MQTT4Rclone:
     image: legobas/mqtt4rclone:latest
     container_name: mqtt4rclone

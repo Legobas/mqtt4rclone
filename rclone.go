@@ -12,8 +12,6 @@ import (
 
 const (
 	BASE_URL                 = "http://localhost:5572"
-	RC_USER                  = "cmd"
-	RC_PASS                  = "f6Lhi09wfbxkd8Ok2l4H"
 	RC_TIMEOUT time.Duration = time.Second * 10
 )
 
@@ -45,7 +43,9 @@ func sendToRclone(command string, payload string) (string, error) {
 		return "", err
 	}
 	req.Header.Add("Content-Type", "application/json")
-	req.SetBasicAuth(RC_USER, RC_PASS)
+	if config.Rclone.Username != "" {
+		req.SetBasicAuth(config.Rclone.Username, config.Rclone.Password)
+	}
 
 	res, err := client.Do(req)
 	if err != nil {
