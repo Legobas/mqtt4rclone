@@ -5,7 +5,6 @@
 [![mqtt-smarthome](https://img.shields.io/badge/mqtt-smarthome-blue.svg?style=flat-square)](https://github.com/mqtt-smarthome/mqtt-smarthome)
 [![Build/Test](https://github.com/Legobas/mqtt4rclone/actions/workflows/release.yml/badge.svg)](https://github.com/Legobas/mqtt4rclone/actions/workflows/release.yml)
 [![CodeQL](https://github.com/Legobas/mqtt4rclone/actions/workflows/codeql.yml/badge.svg)](https://github.com/Legobas/mqtt4rclone/actions/workflows/codeql.yml)
-[![Go Report Card](https://goreportcard.com/badge/github.com/Legobas/mqtt4rclone)](https://goreportcard.com/report/github.com/legobas/mqtt4rclone)
 [![Docker Pulls](https://badgen.net/docker/pulls/legobas/mqtt4rclone?icon=docker&label=pulls)](https://hub.docker.com/r/legobas/mqtt4rclone)
 [![Docker Image Size](https://badgen.net/docker/size/legobas/mqtt4rclone?icon=docker&label=image%20size)](https://hub.docker.com/r/legobas/mqtt4rclone)
 
@@ -17,7 +16,7 @@ Built on standard MQTT conventions, it integrates seamlessly into smart home and
 
 ## Architecture & How It Works
 
-MQTT4Rclone operates as a companion container alongside the official [`rclone/rclone`](https://docker.com) Docker image running in Remote Control (RC) mode.
+MQTT4Rclone operates as a companion container alongside the official [`rclone/rclone`](https://hub.docker.com/r/rclone/rclone) Docker image running in Remote Control (RC) mode.
 
 * **Decoupled Design:** MQTT4Rclone communicates strictly with the Rclone HTTP API over the internal Docker network. It never accesses your local filesystem or cloud credentials directly.
 * **Seamless Upgrades:** Because it interfaces with the official Rclone image, you can update Rclone independently (`rclone/rclone:latest`) without waiting for updates to MQTT4Rclone.
