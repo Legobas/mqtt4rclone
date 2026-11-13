@@ -2,12 +2,12 @@
 
 **Control and monitor Rclone instances via MQTT messages.**
 
-[![mqtt-smarthome](https://shields.io)](https://github.com)
-[![Build/Test](https://github.com)](https://github.com)
-[![CodeQL](https://github.com)](https://github.com)
-[![Go Report Card](https://goreportcard.com)](https://goreportcard.com)
-[![Docker Pulls](https://badgen.net)](https://docker.com)
-[![Docker Image Size](https://badgen.net)](https://docker.com)
+[![mqtt-smarthome](https://img.shields.io/badge/mqtt-smarthome-blue.svg?style=flat-square)](https://github.com/mqtt-smarthome/mqtt-smarthome)
+[![Build/Test](https://github.com/Legobas/mqtt4rclone/actions/workflows/release.yml/badge.svg)](https://github.com/Legobas/mqtt4rclone/actions/workflows/release.yml)
+[![CodeQL](https://github.com/Legobas/mqtt4rclone/actions/workflows/codeql.yml/badge.svg)](https://github.com/Legobas/mqtt4rclone/actions/workflows/codeql.yml)
+[![Go Report Card](https://goreportcard.com/badge/github.com/Legobas/mqtt4rclone)](https://goreportcard.com/report/github.com/legobas/mqtt4rclone)
+[![Docker Pulls](https://badgen.net/docker/pulls/legobas/mqtt4rclone?icon=docker&label=pulls)](https://hub.docker.com/r/legobas/mqtt4rclone)
+[![Docker Image Size](https://badgen.net/docker/size/legobas/mqtt4rclone?icon=docker&label=image%20size)](https://hub.docker.com/r/legobas/mqtt4rclone)
 
 MQTT4Rclone is a lightweight bridge service that enables [Rclone](https://rclone.org) to be controlled and monitored through the MQTT protocol. By decoupling file synchronization from the command line, it allows you to trigger backups and manage cloud storage based on external events or schedules.
 
@@ -27,7 +27,7 @@ MQTT4Rclone operates as a companion container alongside the official [`rclone/rc
 
 ## Quick Start (Docker Compose)
 
-MQTT4Rclone is distributed via [Docker Hub](https://docker.com) and is designed to be deployed alongside Rclone using Docker Compose.
+MQTT4Rclone is distributed via [Docker Hub](https://hub.docker.com/r/legobas/mqtt4rclone) and is designed to be deployed alongside Rclone using Docker Compose.
 
 ### 1. Create `docker-compose.yml`
 
@@ -58,7 +58,7 @@ services:
       - PGID=1000              # Group ID for config directory permissions
       - LOGLEVEL=INFO          # MQTT4Rclone log level: ERROR, INFO (default), DEBUG, TRACE
       - RCLONE_LOGLEVEL=INFO   # Log level for Rclone API responses
-      - TZ=Europe/Amsterdam    # Container timezone
+      - TZ=America/New_York    # Container timezone
     volumes:
       - /path/to/mqtt4rclone/config:/config
     restart: unless-stopped
@@ -123,7 +123,7 @@ Ensure a valid `rclone.conf` file exists in the directory mounted to `/config/rc
 
 ## Usage & Command Reference
 
-MQTT4Rclone translates incoming MQTT messages directly into [Rclone Remote Control API](https://rclone.org) requests:
+MQTT4Rclone translates incoming MQTT messages directly into [Rclone Remote Control API](https://rclone.org/rc/#supported-commands) requests:
 
 * **MQTT Topic:** `mqtt4rclone/<rc_endpoint>`
 * **MQTT Payload:** Valid JSON matching the parameters expected by the Rclone RC endpoint (use `{}` or an empty payload if no parameters are required).
@@ -179,7 +179,7 @@ After executing a command, MQTT4Rclone publishes the JSON response from the Rclo
 
 ## Scheduled Automation
 
-To trigger scheduled synchronization tasks via MQTT, you can pair MQTT4Rclone with [MQTT-Timer](https://github.com):
+To trigger scheduled synchronization tasks via MQTT, you can pair MQTT4Rclone with [MQTT-Timer](https://github.com/Legobas/mqtt-timer):
 
 ```yaml
 timers:
