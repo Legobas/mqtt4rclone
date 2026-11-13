@@ -24,5 +24,4 @@ services:
       - TZ=America/New_York
     volumes:
       - /home/legobas/mqtt4rclone:/config
-      - /cloud_data:/data
     restart: unless-stopped

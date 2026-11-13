@@ -11,32 +11,46 @@ Control Rclone with MQTT messages
 
 MQTT4Rclone is a service that enables [Rclone](https://rclone.org) to be controlled and monitored using MQTT commands.
 It makes it possible to use Rclone with MQTT-enabled devices or services to create automated workflows, such as triggering backups based on specific events or schedules.
-Because it is based on the MQTT protocol can it be easily be integrated with home automation systems, like Home Assistant, Domoticz or Node-RED.
-An use case is to upload the images or videos captured by a security camera to cloud-based storage services.
+Because it is based on the MQTT protocol it can be easily integrated with home automation systems, like Home Assistant, Domoticz or Node-RED.
+A use case is to upload the images or videos captured by a security camera to cloud-based storage services.
 
-### How it workes
+## How it works
 
-RClone is started in 'Remote Control' mode, so it can be controlled by its HTTP API.
-The mqtt4rclone service will send the MQTT JSON message it receives to the Rclone API, using the MQTT topic to create the Rclone url.
-Rclone will then perform the action like synchronizing with a cloud storage.
-Actions which take a long time like sync or copy are handled as a job and return a HTTP response immediately.
-After the HTTP call is completed the response message is sent back to an MQTT topic.
-This is safely done using only the local network environment of the container.
+MQTT4Rclone runs **next to the official [rclone/rclone](https://hub.docker.com/r/rclone/rclone) Docker image**, which is started in Remote Control mode so it can be controlled by its HTTP API.
+MQTT4Rclone only communicates with the Rclone API over HTTP; it never touches your files itself.
+
+Since MQTT4Rclone talks to the official image, it always works with the latest Rclone releases — just pull `rclone/rclone:latest` and you are never left behind.
+
+The mqtt4rclone service sends the MQTT JSON message it receives to the Rclone API, using the MQTT topic to create the Rclone URL.
+Rclone will then perform the action, like synchronizing with a cloud storage.
+Actions which take a long time, like sync or copy, are handled as a job and return an HTTP response immediately.
+After the HTTP call is completed, the response message is sent back to an MQTT topic.
+This is safely done using only the local network environment of the containers.
 
 ## Installation
 
-MQTT4Rclone is available as a Docker [Docker container](#docker) on [DockerHub](https://hub.docker.com/r/legobas/mqtt4rclone)
+MQTT4Rclone is available as a Docker container on [DockerHub](https://hub.docker.com/r/legobas/mqtt4rclone).
 
-# create internal network and start MQTT4Rclone
+Two containers are deployed together:
 
-docker network create "rclone"
+1. **rclone** — the official `rclone/rclone` image, running in Remote Control mode
+2. **mqtt4rclone** — the MQTT bridge that talks to the Rclone API
+
+```bash
 docker compose up -d
+```
+
+Updating to a new Rclone version is now as simple as:
+
+```bash
+docker compose pull && docker compose up -d
+```
 
 ## Configuration
 
 MQTT4Rclone can be configured with the `mqtt4rclone.yml` yaml configuration file.
 
-Keep the RC API private; don't publish 5533 to your network.
+Keep the RC API private; only publish port 5533 if you also want to access the Rclone Web GUI from outside the Docker network.
 
 ### MQTT4Rclone Configuration options
 
@@ -63,23 +77,23 @@ rclone:
   rc_username: <Rclone Remote Control USERNAME>
   rc_password: <Rclone Remote Control PASSWORD>
   response_topic: <MQTT Topic>
-
-```      
+```
 
 ### Rclone configuration
 
-The Rclone configuration file must be present in de same config directory.
+The Rclone configuration file must be present in the config directory of the rclone container (`/config/rclone`).
+Make sure the credentials match those passed to rclone via `--user`/`--pass`, so MQTT4Rclone can authenticate against the Remote Control API.
 
 ## Commands
 
-MQTT4Rclone send commands to Rclone based on the MQTT topic and message.
-The topic is the same as the Rclone rc url path and the message is the JSON as described by: 
+MQTT4Rclone sends commands to Rclone based on the MQTT topic and message.
+The topic is the same as the Rclone rc URL path and the message is the JSON as described by:
 [Rclone Commands](https://rclone.org/rc/#supported-commands)
 
 All the `sync/*` commands **will be started as jobs**, MQTT4Rclone will add `"_async":true` to the json message.
 
-The local path in the docker container is `/data`.
-This path has to be used in the commands sent to rclone (see examples).
+The local path inside the **rclone** container is `/data`.
+This path has to be used in the commands sent to rclone (see examples). MQTT4Rclone itself does not need access to this data; it only passes the paths on to the Rclone API.
 
 ### Examples
 
@@ -108,13 +122,12 @@ mqtt4rclone/sync/sync
 
 mqtt4rclone/sync/copy
 {"srcFs":"/data/mydropbox","dstFs":"dropbox:","_filter":{"MaxAge":"1d"}}
-
 ```
 
 ## Rclone Response
 
 The default MQTT topic where the Rclone response is sent to is: `mqtt4rclone/response`.
-This topic can be changed by the setting configuration option `response_topic`,
+This topic can be changed by the configuration option `response_topic`,
 so any MQTT client can receive the Rclone response and process it.
 
 ## Autosync
@@ -137,57 +150,41 @@ To automatically sync every day/hour/minute you can use [MQTT-Timer](https://git
 
 ## Docker
 
-Docker run example:
-
-```bash
-$ docker run -d -v /home/legobas/mqtt4rclone:/config -v /home/legobas/rclone_data:/data legobas/mqtt4rclone
-```
-
-Docker compose example:
+Docker compose example, running MQTT4Rclone next to the official rclone image:
 
 ```yml
-networks:
-  rclone:
-    internal: true
-  mqtt:
-    external: true
-
 services:
   rclone:
     image: rclone/rclone:latest
     container_name: rclone
     ports:
       - 5533:5533
-    networks:
-      - rclone
     volumes:
-      - /home/bdr/data/rclone:/config/rclone
-      - /storage/rclone/test:/data
+      - /home/legobas/data/rclone:/config/rclone
+      - /storage/rclone:/data
     command:
-      - rcd
-      - --rc-addr=0.0.0.0:5533
-      - --rc-user=bdr
-      - --rc-pass=153068
-      - --log-level=debug
+      - --api-addr=0.0.0.0:5533
+      - --user=xxxxxxxx
+      - --pass=xxxxxxxx
     restart: unless-stopped
 
   mqtt4rclone:
     image: legobas/mqtt4rclone:latest
     container_name: mqtt4rclone
     environment:
-      - PUID=1000              # User id for access to config or data directories with user rights
+      - PUID=1000              # User id for access to config directory with user rights
       - PGID=1000              # User group id
       - LOGLEVEL=debug         # MQTT4Rclone log level: ERROR/INFO (default)/DEBUG/TRACE
+      - RCLONE_LOGLEVEL=INFO   # Log level for rclone API responses
       - TZ=America/New_York    # Timezone
-    networks:
-      - rclone
-      - mqtt
     volumes:
       - /home/legobas/mqtt4rclone:/config
     restart: unless-stopped
 ```
 
-The environment variables are not necessary, if omitted the default values will be used.
+The environment variables are optional; if omitted, the default values will be used.
+
+Only the rclone container needs a data volume: MQTT4Rclone communicates solely with the Rclone API, so all `/data` paths in the MQTT commands are resolved inside the rclone container.
 
 ## Logging
 
@@ -199,18 +196,17 @@ mqtt4rclone/options/set
 {"main":{"LogLevel":"DEBUG"}}
 ```
 
-after debugging set it back by restarting the service or by sending:
+After debugging, set it back by restarting the service or by sending:
 
 ```
 mqtt4rclone/options/set
 {"main":{"LogLevel":"NOTICE"}}
 ```
 
-The logs of mqtt4rclone and rclone are written to stdout, this is the standard docker log.
+The logs of mqtt4rclone and rclone are written to stdout, which is the standard docker log.
 
 To view the logging:
 `docker compose logs` or `docker logs mqtt4rclone`
-
 
 ## Credits
 
