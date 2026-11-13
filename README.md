@@ -31,20 +31,27 @@ MQTT4Rclone is distributed via [Docker Hub](https://hub.docker.com/r/legobas/mqt
 ### 1. Create `docker-compose.yml`
 
 ```yaml
+networks:
+  rclone:
+    internal: true
+  mqtt:
+    external: true
+
 services:
   rclone:
     image: rclone/rclone:latest
     container_name: rclone
-    ports:
-      # Optional: Expose port 5533 only if external access to the Rclone Web GUI/API is required
-      - 5533:5533
+    networks:
+      - rclone
     volumes:
       - /path/to/rclone/config:/config/rclone
       - /path/to/local/storage:/data
     command:
-      - --api-addr=0.0.0.0:5533
-      - --user=<RCLONE_RC_USER>
-      - --pass=<RCLONE_RC_PASSWORD>
+      - rcd
+      - --rc-addr=0.0.0.0:5533          # Rclone rc ip address & port, must match mqtt4rclone configuration
+      - --rc-user=<RCLONE_RC_USER>      # Rclone rc username
+      - --rc-pass=<RCLONE_RC_PASSWORD>  # Rclone rc password
+      - --log-level=info                # Rclone log level: DEBUG, INFO, NOTICE (default), ERROR
     restart: unless-stopped
 
   mqtt4rclone:
@@ -57,6 +64,9 @@ services:
       - PGID=1000              # Group ID for config directory permissions
       - LOGLEVEL=INFO          # MQTT4Rclone log level: ERROR, INFO (default), DEBUG, TRACE
       - TZ=America/New_York    # Container timezone
+    networks:
+      - rclone
+      - mqtt
     volumes:
       - /path/to/mqtt4rclone/config:/config
     restart: unless-stopped
@@ -64,7 +74,7 @@ services:
 
 > **Note on Volumes & Security:**
 > * **Data Volumes:** Only the `rclone` container requires access to your local data volume (`/data`). All file paths specified in MQTT payloads are resolved relative to the `rclone` container.
-> * **Network Security:** For optimal security, avoid exposing port `5533` to the host network unless you explicitly require external access to the Rclone Web GUI.
+> * **Network Security:** For optimal security, avoid exposing the rclone rc port (`5533`) to the host network unless you explicitly require external access to Rclone.
 
 ### 2. Deploy and Update
 

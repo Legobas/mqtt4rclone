@@ -1,0 +1,39 @@
+networks:
+  rclone:
+    internal: true
+  mqtt:
+    external: true
+
+services:
+  rclone:
+    image: rclone/rclone:latest
+    container_name: rclone
+    networks:
+      - rclone
+    volumes:
+      - /home/legobas/rclone:/config/rclone:ro
+      - /mnt/rclone:/data
+    command:
+      - rcd
+      - --rc-addr=0.0.0.0:5533
+      - --rc-user=xxxxxxxx
+      - --rc-pass=yyyyyyyy
+      - --log-level=debug
+    restart: unless-stopped
+
+  MQTT4Rclone:
+    image: legobas/mqtt4rclone:latest
+    container_name: mqtt4rclone
+    depends_on:
+      - rclone
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - LOGLEVEL=debug
+      - TZ=America/New_York
+    networks:
+      - rclone
+      - mqtt
+    volumes:
+      - /home/legobas/mqtt4rclone:/config:ro
+    restart: unless-stopped

@@ -5,4 +5,6 @@ mqtt:
   qos: 0
 
 rclone:
+  rc_username: xxxxxxxx
+  rc_password: yyyyyyyy
   response_topic: <MQTT Topic>
