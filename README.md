@@ -56,7 +56,6 @@ services:
       - PUID=1000              # User ID for config directory permissions
       - PGID=1000              # Group ID for config directory permissions
       - LOGLEVEL=INFO          # MQTT4Rclone log level: ERROR, INFO (default), DEBUG, TRACE
-      - RCLONE_LOGLEVEL=INFO   # Log level for Rclone API responses
       - TZ=America/New_York    # Container timezone
     volumes:
       - /path/to/mqtt4rclone/config:/config
