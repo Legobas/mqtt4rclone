@@ -7,7 +7,6 @@ import (
 	"errors"
 	"io"
 	"net/http"
-	"strings"
 	"time"
 
 	"github.com/rs/zerolog/log"
@@ -25,6 +24,8 @@ type RcloneSettings struct {
 
 func New(username string, password string) (*RcloneSettings, error) {
 	var err error
+
+	log.Trace().Msgf("Username: %s", username)
 
 	rc := &RcloneSettings{
 		Username: username,
@@ -44,36 +45,38 @@ func (rc RcloneSettings) SendToRclone(command string, jsonMsg string) (string, e
 	ctx, cancel := context.WithTimeout(context.Background(), requestTimeout)
 	defer cancel()
 
+	log.Debug().Msgf("jsonMsg: %s", jsonMsg)
+
 	url := baseUrl + command
 	async := false
 
-	jsonData, err := json.Marshal(jsonMsg)
-	if err != nil {
-		log.Error().Err(err).Msg("Failed to marshal request")
-		return "", err
-	}
+	// jsonData, err := json.Marshal(jsonMsg)
+	// if err != nil {
+	// log.Error().Err(err).Msg("Failed to marshal request")
+	// return "", err
+	// }
 
 	// start job for sync (add _async:true to json)
-	if strings.HasPrefix(command, "/sync") {
-		async = true
-		json_data := map[string]any{}
-		err := json.Unmarshal([]byte(jsonData), &json_data)
-		if err != nil {
-			log.Fatal().Err(err)
-		}
-		json_data["_async"] = true
-		jsonData, err = json.Marshal(jsonMsg)
-		if err != nil {
-			log.Error().Err(err).Msg("Failed to marshal request")
-			return "", err
-		}
-	}
+	// if strings.HasPrefix(command, "/sync") {
+	// async = true
+	// json_data := map[string]any{}
+	// err := json.Unmarshal([]byte(jsonMsg), &json_data)
+	// if err != nil {
+	// log.Fatal().Err(err)
+	// }
+	// json_data["_async"] = true
+	// jsonData, err = json.Marshal(jsonMsg)
+	// if err != nil {
+	// log.Error().Err(err).Msg("Failed to marshal request")
+	// return "", err
+	// }
+	// }
 
 	log.Debug().Msgf("Rclone url: %s", url)
-	log.Debug().Msgf("Rclone json: %s", jsonData)
+	log.Debug().Msgf("Rclone json: %s", jsonMsg)
 
-	payload := bytes.NewReader(jsonData)
-	log.Trace().Msgf("Rclone Request:\n%v", string(jsonData))
+	payload := bytes.NewReader([]byte(jsonMsg))
+	log.Trace().Msgf("Rclone Request:\n%v", jsonMsg)
 
 	req, err := http.NewRequestWithContext(ctx, "POST", url, payload)
 	if err != nil {
